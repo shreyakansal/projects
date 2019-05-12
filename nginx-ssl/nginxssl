@@ -1,0 +1,39 @@
+server {
+    listen       80;
+  
+    
+    
+    root   /var/www/nginx;
+    index  index.html index.htm;
+
+
+    server_name _;
+    return 301 https://$host$request_uri;
+
+ 
+    
+   #access_log  /var/log/nginx/host.access.log  main;
+ 
+    location / {
+	return 301 https://$host$request_uri;
+	try_files $uri $uri/ =404;
+    }
+ 
+  
+}
+# Change the default configuration to enable ssl
+server {
+    listen 443 ssl;
+   # ssl on;
+    ssl_certificate /etc/ssl/nginx.crt;
+    ssl_certificate_key /etc/ssl/nginx.key;
+    server_name _;
+    server_tokens off;
+    add_header Strict-Transport-Security "max-age=31536000";
+
+    location / {
+        root   /var/www/nginx;
+        index  index.html index.htm;
+    }
+    
+}

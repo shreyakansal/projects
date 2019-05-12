@@ -1,0 +1,23 @@
+---
+# tasks file for nginx
+- name: ensure nginx is at the latest version
+  apt: name=nginx state=latest
+  become: yes
+  when: ansible_os_family == "Debian"
+  notify:
+   - restart nginx
+
+- name: ensure nginx is at the latest version
+  yum: name=nginx state=latest
+  become: yes
+  when: ansible_os_family == "RedHat"
+  notify:
+   - restart nginx
+
+- name: copy the nginx config file and restart nginx
+  become: yes
+  template:
+    src: /home/ubuntu/nginx/templates/nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+
+

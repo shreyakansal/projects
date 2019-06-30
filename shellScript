@@ -1,0 +1,4 @@
+#!/bin/bash 
+cd /opt/ && eval `aws ecr get-login --no-include-email --region ap-south-1 | sed 's|https://||'` 
+sudo sed -i 's/3525320*****.dkr.ecr.ap-south-1.amazonaws.com\/${APPLICATION}:.*/3525320*****.dkr.ecr.ap-south-1.amazonaws.com\/${APPLICATION}:${Tag}/g' docker-compose.yml
+docker-compose up -d

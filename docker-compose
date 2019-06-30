@@ -1,0 +1,58 @@
+version: '3.3'
+networks:
+  gstin-net:
+services:
+   authentication:
+    hostname: uat-authentication
+    container_name: uat-authentication
+    image: 352532006040.dkr.ecr.ap-south-1.amazonaws.com/authentication-api:v30
+    restart: always
+    ports:
+      - "8086:8080"
+    volumes:
+      - "/opt/logs/authentication:/opt/logs"
+
+   gst-filling:
+    hostname:  uat-gst-filling
+    container_name: uat-gst-filling
+    image: 352532006040.dkr.ecr.ap-south-1.amazonaws.com/gst-filing-api:v15
+    restart: always
+    volumes:
+      - "/opt/logs/gst-filing:/opt/logs/"
+    ports:
+      - "8087:8080"
+   
+   data-management:
+    hostname: uat-data-management
+    container_name: uat-data-management
+    image: 352532006040.dkr.ecr.ap-south-1.amazonaws.com/data-management-api:v51
+    restart: always
+    volumes:
+      - "/opt/logs/data-management:/opt/logs/"
+    ports:
+      - "8088:8080"
+   gstn-integration:
+    hostname: uat-gstn-integration
+    container_name: uat-gstn-integration
+    image: 352532006040.dkr.ecr.ap-south-1.amazonaws.com/gstn-integration-api:v18
+    restart: always
+    volumes:
+      - "/opt/logs/gstn-integration:/opt/logs/"
+    ports:
+      - "8089:8080"
+   frontend:
+    hostname: pwc-frontend
+    container_name: front-end
+    image: 352532006040.dkr.ecr.ap-south-1.amazonaws.com/pwc-gstn-fe:c0f665d
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - "/opt/logs/frontend:/opt/logs"
+
+
+networks:
+  default:
+    external:
+      name: gstin-net
+                           

@@ -25,9 +25,6 @@ final_launch_time = " "
 
 def seek_key_items(item_new, key_list):
     count = 0
-    # if isinstance(item_new, list):
-    #     #THE ITEM INSIDE IS DICT NOT LIST
-    #     import pdb;pdb.set_trace()
     for k, v in item_new.items():
         if k in key_list:
             if isinstance(v, dict):

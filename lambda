@@ -1,0 +1,157 @@
+import json
+import boto3
+from boto3 import client
+import os
+import gzip
+
+def ListFiles(client):
+    """List files in specific S3 URL"""
+    response = client.list_objects(Bucket='shreya-cloud', Prefix= path)
+    for content in response.get('Contents', []):
+        yield content.get('Key')
+# Create an S3 client
+inst_id = input("enter the instance id")
+ec2 = boto3.client('ec2')
+Response = ec2.describe_instances()
+
+
+path = 'AWSLogs/142908728282/CloudTrail/ap-south-1/'
+filtered_list = ['Instances', 'LaunchTime', ]
+condition_list = ['instanceID', ]
+flag = False
+count = 0
+final_launch_time = " "
+
+
+def seek_key_items(item_new, key_list):
+    count = 0
+    # if isinstance(item_new, list):
+    #     #THE ITEM INSIDE IS DICT NOT LIST
+    #     import pdb;pdb.set_trace()
+    for k, v in item_new.items():
+        if k in key_list:
+            if isinstance(v, dict):
+                print(k + ": " + list(v.keys())[0])
+            else:
+                for key,value in v[0].items():
+                    if value == inst_id:
+                        count += 1
+                    if count and key == 'LaunchTime':
+                        global final_launch_time
+                        final_launch_time = value
+
+
+        if isinstance(v, dict):
+            seek_key_items(v, key_list)
+
+
+def seek_keys(item, key_list, item_new):
+    global flag
+    for k, v in item.items():
+
+        if k == "InstanceId":
+            if item["InstanceId"] == inst_id:
+                flag = True
+
+        if flag:
+            seek_key_items(item_new, key_list)
+            flag = False
+
+        if isinstance(v, list) and v:
+            for item in v:
+                seek_keys(item, key_list, item_new)
+
+        if isinstance(v, dict):
+            seek_keys(v, key_list, item_new)
+
+
+values = Response['Reservations']
+
+for item in values:
+    item_new = item
+    seek_keys(item, filtered_list, item_new)
+
+
+string = str(final_launch_time).split(" ")
+date = str(string[0])
+
+year, month, date = date.split("-")
+
+
+path += year + '/' + month + '/' + date +'/'
+
+s3 = boto3.client('s3')
+
+conn = client('s3')
+
+file_list = ListFiles(conn)
+
+i = 1
+print(file_list)
+for file in file_list:
+    #print('File found: %s' % file)
+    x = file
+    s3.download_file('shreya-cloud', x, '/usr/logs/%d.gz' %i)
+    i = i+1
+
+os.chdir('/usr/logs')
+#print(os.getcwd())
+a = os.getcwd()
+#print(a)
+b = os.listdir(a)
+#print(b)
+
+c = 0
+
+for file in b:
+    with gzip.open(file, "rt", encoding="utf-8") as f:
+
+        data = json.load(f)
+        str_dict = str(data)
+        # if str_dict.find(' "eventName : RunInstances" ') != -1:
+        #     print("ok")
+
+        x = json.dumps(data, indent=2, sort_keys=True)
+
+        filtered_list = ['sourceIPAddress', 'arn']
+        condition_list = ['instanceID']
+        flag = False
+        count = 0
+
+
+        def seek_key_items(item_new, key_list):
+            for k, v in item_new.items():
+                if k in key_list:
+                    if isinstance(v, dict):
+                            print(k + ": " + list(v.keys())[0])
+                    else:
+                            print(k + ": " + str(v))
+                if isinstance(v, dict):
+                    seek_key_items(v, key_list)
+
+
+        def seek_keys(item, key_list, item_new):
+            global flag
+            for k, v in item.items():
+                if k == "eventName":
+                    if item["eventName"] == "RunInstances":
+                        flag = True
+
+                if flag:
+                    seek_key_items(item_new, key_list)
+                    flag = False
+
+                if isinstance(v, dict):
+                    seek_keys(v, key_list, item_new)
+
+        values = data['Records']
+
+
+        for item in values:
+            item_new = item
+            seek_keys(item, filtered_list, item_new)
+
+
+
+
+

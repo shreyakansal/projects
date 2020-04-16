@@ -15,7 +15,7 @@ ec2 = boto3.client('ec2')
 Response = ec2.describe_instances()
 
 
-path = 'AWSLogs/142908728282/CloudTrail/ap-south-1/'
+path = 'AWSLogs/xxxxxx/CloudTrail/ap-south-1/'
 filtered_list = ['Instances', 'LaunchTime', ]
 condition_list = ['instanceID', ]
 flag = False

@@ -1,12 +1,12 @@
 pipeline {
     environment{
-        registry = "352532006040.dkr.ecr.ap-south-1.amazonaws.com"
-        ECR_REPO= "352532006040.dkr.ecr.ap-south-1.amazonaws.com"
+        registry = "xxxxxx.dkr.ecr.ap-south-1.amazonaws.com"
+        ECR_REPO= "xxxxxxx.dkr.ecr.ap-south-1.amazonaws.com"
     }
     
 	parameters {
 		 string( description: 'Select a Branch?', name: 'BRANCH')
-		 choice(choices: '''authentication-api\ndata-management-api\ngst-filing-api\ngstn-integration-api\npwc-gstn-fe''' , description: ' Select a Application?', name: 'APPLICATION')
+		 choice(choices: '''1-api\n2-api\n3-api\n4-api''' , description: ' Select a Application?', name: 'APPLICATION')
          choice(choices: '''uat\nproduction'''   ,description: ' Select env for deployment?', name: 'ENV_NAME')
 		 choice(choices: '''blank\nfix\nminor\nmajor''', description: 'Type of Update', name: 'UPDATE')
 	}
@@ -23,7 +23,7 @@ agent any
 		stage('Clone GIT Repo') {
 			steps {
 				script {
-					git(url: 'https://neha.dixit@gitlab.intelligrape.net/tothenew/pwc-gstn/${APPLICATION}.git', branch: '${BRANCH}',credentialsId: 'git-id')
+					git(url: 'https://xxx@gitlab.xxx.net/${APPLICATION}.git', branch: '${BRANCH}',credentialsId: 'git-id')
 				}
 			}
 		}
@@ -40,8 +40,8 @@ agent any
                
                 sh """
                   eval `aws ecr get-login --no-include-email --region ap-south-1 | sed 's|https://||'`
-                   docker build . -t "352532006040.dkr.ecr.ap-south-1.amazonaws.com/${APPLICATION}":"${GIT_COMMIT_SHORT}" -f docker/Dockerfile
-                   docker push "352532006040.dkr.ecr.ap-south-1.amazonaws.com/${APPLICATION}":"${GIT_COMMIT_SHORT}"
+                   docker build . -t "xxx.dkr.ecr.ap-south-1.amazonaws.com/${APPLICATION}":"${GIT_COMMIT_SHORT}" -f docker/Dockerfile
+                   docker push "xxx.dkr.ecr.ap-south-1.amazonaws.com/${APPLICATION}":"${GIT_COMMIT_SHORT}"
                 """
                  
                  

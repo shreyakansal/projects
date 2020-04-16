@@ -2,48 +2,48 @@ version: '3.3'
 networks:
   gstin-net:
 services:
-   authentication:
-    hostname: uat-authentication
-    container_name: uat-authentication
-    image: 352532006040.dkr.ecr.ap-south-1.amazonaws.com/authentication-api:v30
+   4:
+    hostname: uat-4
+    container_name: uat-4
+    image: xxxxx.dkr.ecr.ap-south-1.amazonaws.com/4-api:v30
     restart: always
     ports:
       - "8086:8080"
     volumes:
-      - "/opt/logs/authentication:/opt/logs"
+      - "/opt/logs/4:/opt/logs"
 
-   gst-filling:
-    hostname:  uat-gst-filling
-    container_name: uat-gst-filling
-    image: 352532006040.dkr.ecr.ap-south-1.amazonaws.com/gst-filing-api:v15
+   3:
+    hostname:  uat-3
+    container_name: uat-3
+    image: xxxxx.dkr.ecr.ap-south-1.amazonaws.com/3:v15
     restart: always
     volumes:
-      - "/opt/logs/gst-filing:/opt/logs/"
+      - "/opt/logs/3:/opt/logs/"
     ports:
       - "8087:8080"
    
-   data-management:
-    hostname: uat-data-management
-    container_name: uat-data-management
-    image: 352532006040.dkr.ecr.ap-south-1.amazonaws.com/data-management-api:v51
+   2:
+    hostname: uat-2
+    container_name: uat-2
+    image: xxxx.dkr.ecr.ap-south-1.amazonaws.com/2-api:v51
     restart: always
     volumes:
-      - "/opt/logs/data-management:/opt/logs/"
+      - "/opt/logs/2:/opt/logs/"
     ports:
       - "8088:8080"
-   gstn-integration:
-    hostname: uat-gstn-integration
-    container_name: uat-gstn-integration
-    image: 352532006040.dkr.ecr.ap-south-1.amazonaws.com/gstn-integration-api:v18
+   1:
+    hostname: uat-1
+    container_name: uat-1
+    image: xxxxx.dkr.ecr.ap-south-1.amazonaws.com/1-api:v18
     restart: always
     volumes:
-      - "/opt/logs/gstn-integration:/opt/logs/"
+      - "/opt/logs/1:/opt/logs/"
     ports:
       - "8089:8080"
    frontend:
     hostname: pwc-frontend
     container_name: front-end
-    image: 352532006040.dkr.ecr.ap-south-1.amazonaws.com/pwc-gstn-fe:c0f665d
+    image: xxxxxx.dkr.ecr.ap-south-1.amazonaws.com/-fe:c0f665d
     restart: always
     ports:
       - "80:80"
